@@ -1,0 +1,9 @@
+{
+    "default": "/favicon.ico",
+    "github": "/SocialLogos/github-logo.svg",
+    "google": "/SocialLogos/google-logo.svg",
+    "facebook": "/SocialLogos/facebook-logo.svg",
+    "linkedin-openid": "/SocialLogos/linkedin-logo.svg",
+    "apple": "/SocialLogos/apple-logo.svg",
+    "x": "/SocialLogos/x-logo.svg"
+}
