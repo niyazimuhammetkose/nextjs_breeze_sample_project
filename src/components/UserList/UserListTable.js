@@ -59,10 +59,10 @@ const UserListTable = ({ users, loading }) => {
                                         {user?.email}
                                     </td>
                                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                        {user?.email_verified_at === null ? (
-                                            '---'
-                                        ) : (
+                                        {user?.is_email_verified ? (
                                             <CheckIcon />
+                                        ) : (
+                                            '---'
                                         )}
                                     </td>
                                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
@@ -80,9 +80,9 @@ const UserListTable = ({ users, loading }) => {
                                             {user?.o_auth_providers.length >
                                             0 ? (
                                                 user.o_auth_providers.map(
-                                                    (provider, index) => (
+                                                    provider => (
                                                         <SocialLogo
-                                                            key={provider.id}
+                                                            key={provider?.id}
                                                             logoName={
                                                                 provider?.provider
                                                             }
