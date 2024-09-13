@@ -3,19 +3,19 @@ import Header from '@/app/(app)/Header'
 import Loading from '@/app/(app)/Loading'
 import { Box, Container, Paper } from '@mui/material'
 
-const UserList = dynamic(() => import('@/components/UserList/UserList'), {
+const ProgrammerList = dynamic(() => import('@/components/ProgrammerList/ProgrammerList'), {
     ssr: false,
     loading: () => <Loading />,
 })
 
-const UserListPage = () => {
+const ProgrammerListPage = () => {
     return (
         <>
-            <Header title="User List" />
+            <Header title="Programmer List" />
             <Container maxWidth="lg" sx={{ py: 6 }}>
                 <Paper elevation={3}>
                     <Box p={1}>
-                        <UserList />
+                        <ProgrammerList />
                     </Box>
                 </Paper>
             </Container>
@@ -23,4 +23,4 @@ const UserListPage = () => {
     )
 }
 
-export default UserListPage
+export default ProgrammerListPage

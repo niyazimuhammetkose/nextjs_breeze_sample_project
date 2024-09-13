@@ -20,7 +20,7 @@ const UserListTable = ({ datalist, loading }) => {
             <Table>
                 <TableHead>
                     <TableRow>
-                        <TableCell>ID</TableCell>
+                        <TableCell>IDss</TableCell>
                         <TableCell>Name</TableCell>
                         <TableCell>Email</TableCell>
                         <TableCell>Email Verified</TableCell>

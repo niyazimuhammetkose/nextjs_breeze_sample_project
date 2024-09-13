@@ -37,12 +37,19 @@ const Navigation = ({ user }) => {
                             </NavLink>
                         </div>
 
-                        {/* Navigation Links */}
                         <div className="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
                             <NavLink
                                 href="/user-list"
                                 active={usePathname() === '/user-list'}>
                                 User List
+                            </NavLink>
+                        </div>
+
+                        <div className="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
+                            <NavLink
+                                href="/programmer-list"
+                                active={usePathname() === '/programmer-list'}>
+                                Programmer List
                             </NavLink>
                         </div>
                     </div>
