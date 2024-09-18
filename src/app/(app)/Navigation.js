@@ -5,7 +5,7 @@ import NavLink from '@/components/NavLink'
 import ResponsiveNavLink, {
     ResponsiveNavButton,
 } from '@/components/ResponsiveNavLink'
-import { DropdownButton } from '@/components/DropdownLink'
+import DropdownLink, { DropdownButton } from '@/components/DropdownLink'
 import { useAuth } from '@/hooks/auth'
 import { usePathname } from 'next/navigation'
 import { useState } from 'react'
@@ -77,6 +77,10 @@ const Navigation = ({ user }) => {
                                     </div>
                                 </button>
                             }>
+                            {/* Authentication */}
+                            <DropdownLink href="/profile-management">
+                                Profile Management
+                            </DropdownLink>
                             {/* Authentication */}
                             <DropdownButton onClick={logout}>
                                 Logout

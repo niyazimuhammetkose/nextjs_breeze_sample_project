@@ -26,6 +26,7 @@ const UserListTable = ({ datalist, loading }) => {
                         <TableCell>Email Verified</TableCell>
                         <TableCell>Created At</TableCell>
                         <TableCell>Updated At</TableCell>
+                        <TableCell>2FA Enabled</TableCell>
                         <TableCell>OAuth Providers</TableCell>
                     </TableRow>
                 </TableHead>
@@ -60,6 +61,13 @@ const UserListTable = ({ datalist, loading }) => {
                                 </TableCell>
                                 <TableCell>
                                     <FormatDate dateString={item?.updated_at} />
+                                </TableCell>
+                                <TableCell>
+                                    {item?.is_two_factor_enabled ? (
+                                        <CheckIcon />
+                                    ) : (
+                                        '---'
+                                    )}
                                 </TableCell>
                                 <TableCell>
                                     <Box display="flex" gap={1}>

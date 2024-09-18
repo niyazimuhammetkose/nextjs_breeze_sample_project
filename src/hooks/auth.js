@@ -6,10 +6,15 @@ import { useParams, useRouter } from 'next/navigation'
 export const useAuth = ({ middleware, redirectIfAuthenticated } = {}) => {
     const router = useRouter()
     const params = useParams()
+    const api_prefix = process.env.NEXT_PUBLIC_BACKEND_API_PREFIX
 
-    const { data: user, error, mutate } = useSWR('/api/user', () =>
+    const {
+        data: user,
+        error,
+        mutate,
+    } = useSWR(api_prefix + '/user', () =>
         axios
-            .get('/api/user')
+            .get(api_prefix + '/user')
             .then(res => res.data)
             .catch(error => {
                 if (error.response.status !== 409) throw error
@@ -43,6 +48,28 @@ export const useAuth = ({ middleware, redirectIfAuthenticated } = {}) => {
 
         axios
             .post('/login', props)
+            .then(response => {
+                if (response.data?.two_factor) {
+                    router.push('/two-factor-authentication')
+                } else {
+                    mutate()
+                }
+            })
+            .catch(error => {
+                if (error.response.status !== 422) throw error
+
+                setErrors(error.response.data.errors)
+            })
+    }
+
+    const verifyTwoFactorCode = async ({ code, setErrors, setStatus }) => {
+        await csrf()
+
+        setErrors([])
+        setStatus(null)
+
+        axios
+            .post('/two-factor-challenge', { code })
             .then(() => mutate())
             .catch(error => {
                 if (error.response.status !== 422) throw error
@@ -112,8 +139,10 @@ export const useAuth = ({ middleware, redirectIfAuthenticated } = {}) => {
 
     return {
         user,
+        mutate,
         register,
         login,
+        verifyTwoFactorCode,
         forgotPassword,
         resetPassword,
         resendEmailVerification,

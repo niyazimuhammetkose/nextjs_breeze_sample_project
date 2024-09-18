@@ -1,4 +1,4 @@
-import axios from '@/lib/axios'
+import { api_axios as axios } from '@/lib/axios'
 
 export const fetchPaginatedData = async (endpoint, page = 1, perPage = 10) => {
     try {
@@ -11,4 +11,3 @@ export const fetchPaginatedData = async (endpoint, page = 1, perPage = 10) => {
         throw error
     }
 }
-

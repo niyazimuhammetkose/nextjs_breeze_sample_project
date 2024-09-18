@@ -10,3 +10,12 @@ const axios = Axios.create({
 })
 
 export default axios
+
+export const api_axios = Axios.create({
+    baseURL: process.env.NEXT_PUBLIC_BACKEND_URL + process.env.NEXT_PUBLIC_BACKEND_API_PREFIX,
+    headers: {
+        'X-Requested-With': 'XMLHttpRequest',
+    },
+    withCredentials: true,
+    withXSRFToken: true
+})

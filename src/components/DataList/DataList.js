@@ -1,3 +1,5 @@
+'use client'
+
 import { useState, useEffect } from 'react'
 import { fetchPaginatedData } from '@/services/apiService'
 import DataListTable from '@/components/DataList/DataListTable'
@@ -54,9 +56,6 @@ const DataList = ({ pageName, endpoint }) => {
         <Container maxWidth="lg">
             <Box my={4}>
                 <Paper elevation={3} style={{ padding: 16 }}>
-                    
-                    {/* Inline Alert for errors */}
-                    <ErrorAlert messages={errors} />
 
                     {/* Pagination */}
                     <Box mb={3}>
