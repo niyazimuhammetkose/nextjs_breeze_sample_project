@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import axios from '@/lib/axios'
+import { api_axios, axios } from '@/lib/axios'
 import {
     Box,
     Container,
@@ -21,18 +21,18 @@ const CustomApiRequest = () => {
     const [showSnackbar, setShowSnackbar] = useState(false)
 
     // const endpoint = '/api/tokens/create'
-    const endpoint = '/user/two-factor-qr-code'
+    const endpoint = '/user/two-factor-recovery-codes'
 
     const params = {
-        token_name: 'Bearer',
+        // token_name: 'Bearer',
     }
 
     const fetchDataList = async () => {
         setErrors([])
         setLoading(true)
         await axios
-            // .post(endpoint, params)
-            .get(endpoint, params)
+            .post(endpoint, params)
+            // .get(endpoint, params)
             .then(response => {
                 console.log('Fetched data list:', response.data)
                 setDataList(response.data)

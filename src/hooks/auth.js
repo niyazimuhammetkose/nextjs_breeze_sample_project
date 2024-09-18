@@ -6,15 +6,10 @@ import { useParams, useRouter } from 'next/navigation'
 export const useAuth = ({ middleware, redirectIfAuthenticated } = {}) => {
     const router = useRouter()
     const params = useParams()
-    const api_prefix = process.env.NEXT_PUBLIC_BACKEND_API_PREFIX
 
-    const {
-        data: user,
-        error,
-        mutate,
-    } = useSWR(api_prefix + '/user', () =>
+    const { data: user, error, mutate } = useSWR('/api/user', () =>
         axios
-            .get(api_prefix + '/user')
+            .get('/api/user')
             .then(res => res.data)
             .catch(error => {
                 if (error.response.status !== 409) throw error

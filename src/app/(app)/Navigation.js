@@ -82,6 +82,10 @@ const Navigation = ({ user }) => {
                                 Profile Management
                             </DropdownLink>
                             {/* Authentication */}
+                            <DropdownLink href="/token-management">
+                                Token Management
+                            </DropdownLink>
+                            {/* Authentication */}
                             <DropdownButton onClick={logout}>
                                 Logout
                             </DropdownButton>

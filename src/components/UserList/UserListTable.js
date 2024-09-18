@@ -28,6 +28,7 @@ const UserListTable = ({ datalist, loading }) => {
                         <TableCell>Updated At</TableCell>
                         <TableCell>2FA Enabled</TableCell>
                         <TableCell>OAuth Providers</TableCell>
+                        <TableCell>Deleted</TableCell>
                     </TableRow>
                 </TableHead>
                 <TableBody>
@@ -84,6 +85,13 @@ const UserListTable = ({ datalist, loading }) => {
                                               )
                                             : '---'}
                                     </Box>
+                                </TableCell>
+                                <TableCell>
+                                    {item?.is_deleted ? (
+                                        <CheckIcon />
+                                    ) : (
+                                        '---'
+                                    )}
                                 </TableCell>
                             </TableRow>
                         ))

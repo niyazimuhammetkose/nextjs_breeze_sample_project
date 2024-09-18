@@ -31,7 +31,7 @@ const ProfileManagement = () => {
                     <TwoFactorAuthentication user={user} mutate={mutate} />
                 </Paper>
                 <Paper square={false} elevation={3} style={{ padding: 16 }}>
-                    <DeleteAccount />
+                    <DeleteAccount user={user} mutate={mutate} />
                 </Paper>
             </Stack>
         </>

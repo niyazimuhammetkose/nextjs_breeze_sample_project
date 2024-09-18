@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { TextField, Button, Box, Typography } from '@mui/material'
-import { api_axios as axios } from '@/lib/axios'
+import axios from '@/lib/axios'
 import ErrorAlert from '@/components/ErrorAlert'
 import SuccessAlert from '@/components/SuccessAlert'
 
@@ -33,11 +33,11 @@ const ProfileInformation = ({ user, mutate }) => {
         setShowSnackbar(false)
 
         await axios
-            .put('/user/profile/update-info', formData)
+            .put('/user/profile-information', formData)
             .then(response => {
-                mutate() // Refresh user data after update
+                mutate()
                 setSuccessMessage([response.data?.message])
-                setShowSnackbar(true) // Show success snackbar
+                setShowSnackbar(true)
             })
             .catch(error => {
                 if (error.response?.status === 422) {
@@ -46,7 +46,7 @@ const ProfileInformation = ({ user, mutate }) => {
                     setErrors([
                         error.response?.data?.message || 'An error occurred',
                     ])
-                    setShowSnackbar(true) // Show error snackbar
+                    setShowSnackbar(true)
                 }
             })
     }
@@ -87,7 +87,6 @@ const ProfileInformation = ({ user, mutate }) => {
                 Update Profile
             </Button>
 
-            {/* Snackbar for temporary error notifications */}
             <ErrorAlert
                 messages={errors}
                 isSnackbar={true}
@@ -95,7 +94,6 @@ const ProfileInformation = ({ user, mutate }) => {
                 onCloseSnackbar={handleCloseSnackbar}
             />
 
-            {/* Snackbar for temporary error notifications */}
             <SuccessAlert
                 messages={successMessage}
                 isSnackbar={true}

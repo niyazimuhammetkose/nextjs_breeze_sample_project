@@ -1,14 +1,16 @@
+'use client'
+
 import { useState } from 'react'
 import { Typography, Button, TextField, Box } from '@mui/material'
-import { api_axios as axios } from '@/lib/axios'
+import axios from '@/lib/axios'
 import ErrorAlert from '@/components/ErrorAlert'
 import SuccessAlert from '@/components/SuccessAlert'
 
 const UpdatePassword = ({ user, mutate }) => {
     const [formData, setFormData] = useState({
         current_password: '',
-        new_password: '',
-        new_password_confirmation: '',
+        password: '',
+        password_confirmation: '',
     })
     const [errors, setErrors] = useState([])
     const [successMessage, setSuccessMessage] = useState([])
@@ -32,15 +34,15 @@ const UpdatePassword = ({ user, mutate }) => {
         setShowSnackbar(false)
 
         await axios
-            .put('/user/profile/update-password', formData)
+            .put('/user/password', formData)
             .then(response => {
-                mutate() // Refresh user data after update
+                mutate()
                 setSuccessMessage([response.data?.message])
-                setShowSnackbar(true) // Show success snackbar
+                setShowSnackbar(true)
                 setFormData({
                     current_password: '',
-                    new_password: '',
-                    new_password_confirmation: '',
+                    password: '',
+                    password_confirmation: '',
                 })
             })
             .catch(error => {
@@ -50,7 +52,7 @@ const UpdatePassword = ({ user, mutate }) => {
                     setErrors([
                         error.response?.data?.message || 'An error occurred',
                     ])
-                    setShowSnackbar(true) // Show error snackbar
+                    setShowSnackbar(true)
                 }
             })
     }
@@ -76,28 +78,28 @@ const UpdatePassword = ({ user, mutate }) => {
 
             <TextField
                 label="New Password"
-                name="new_password"
+                name="password"
                 type="password"
-                value={formData.new_password}
+                value={formData.password}
                 onChange={handleChange}
                 fullWidth
                 margin="normal"
-                error={Boolean(errors.new_password)}
-                helperText={errors.new_password && errors.new_password[0]}
+                error={Boolean(errors.password)}
+                helperText={errors.password && errors.password[0]}
             />
 
             <TextField
                 label="Confirm New Password"
-                name="new_password_confirmation"
+                name="password_confirmation"
                 type="password"
-                value={formData.new_password_confirmation}
+                value={formData.password_confirmation}
                 onChange={handleChange}
                 fullWidth
                 margin="normal"
-                error={Boolean(errors.new_password_confirmation)}
+                error={Boolean(errors.password_confirmation)}
                 helperText={
-                    errors.new_password_confirmation &&
-                    errors.new_password_confirmation[0]
+                    errors.password_confirmation &&
+                    errors.password_confirmation[0]
                 }
             />
 
@@ -109,7 +111,6 @@ const UpdatePassword = ({ user, mutate }) => {
                 Update Password
             </Button>
 
-            {/* Snackbar for temporary error notifications */}
             <ErrorAlert
                 messages={errors}
                 isSnackbar={true}
@@ -117,7 +118,6 @@ const UpdatePassword = ({ user, mutate }) => {
                 onCloseSnackbar={handleCloseSnackbar}
             />
 
-            {/* Snackbar for temporary error notifications */}
             <SuccessAlert
                 messages={successMessage}
                 isSnackbar={true}
