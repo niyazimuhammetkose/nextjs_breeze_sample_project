@@ -13,7 +13,11 @@ const UserListPage = () => {
         <>
             <Header title="User List" />
             <Container maxWidth="lg" sx={{ py: 6 }}>
-                <DataList pageName={'UserList'} endpoint={'/users'} />
+                <DataList
+                    pageName={'UserList'}
+                    endpoint={'/users'}
+                    enableBasicSearch={true}
+                />
             </Container>
         </>
     )

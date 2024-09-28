@@ -2,12 +2,13 @@
 
 import { useState, useEffect } from 'react'
 import { fetchPaginatedData } from '@/services/apiService'
+import { Box, Container, Paper } from '@mui/material'
 import DataListTable from '@/components/DataList/DataListTable'
 import Pagination from '@/components/Pagination'
-import { Box, Container, Paper } from '@mui/material'
+import BasicSearch from '@/components/BasicSearch'
 import ErrorAlert from '@/components/ErrorAlert'
 
-const DataList = ({ pageName, endpoint }) => {
+const DataList = ({ pageName, endpoint, enableBasicSearch = false }) => {
     const [datalist, setDataList] = useState([])
     const [loading, setLoading] = useState(true)
     const [page, setPage] = useState(1)
@@ -16,24 +17,33 @@ const DataList = ({ pageName, endpoint }) => {
     const [links, setLinks] = useState({})
     const [errors, setErrors] = useState([])
     const [showSnackbar, setShowSnackbar] = useState(false)
+    const [searchQuery, setSearchQuery] = useState('')
 
-    const fetchDataList = async (page, perPage) => {
+    const fetchDataList = async (page, perPage, search = '') => {
         setErrors([])
         setLoading(true)
         try {
-            const { data, meta, links } = await fetchPaginatedData(
-                endpoint,
+            const toFetchedEndpoint =
+                enableBasicSearch && search ? `${endpoint}/search` : endpoint
+
+            const params = {
                 page,
                 perPage,
+                ...(search && { search }),
+            }
+
+            const { data, meta, links } = await fetchPaginatedData(
+                toFetchedEndpoint,
+                page,
+                perPage,
+                params,
             )
             setDataList(data)
             setMeta(meta)
             setLinks(links)
         } catch (error) {
             console.error('Error fetching data list:', error)
-            // if (error.response.status !== 409) throw error
-
-            setErrors([error.response.data?.message || 'An error occurred'])
+            setErrors([error.response?.data?.message || 'An error occurred'])
             setShowSnackbar(true)
         } finally {
             setLoading(false)
@@ -41,11 +51,11 @@ const DataList = ({ pageName, endpoint }) => {
     }
 
     useEffect(() => {
-        fetchDataList(page, perPage)
+        fetchDataList(page, perPage, searchQuery)
     }, [page, perPage])
 
-    const refreshUserList = () => {
-        fetchDataList(page, perPage)
+    const refreshDataList = () => {
+        fetchDataList(page, perPage, searchQuery)
     }
 
     const handleCloseSnackbar = () => {
@@ -56,6 +66,19 @@ const DataList = ({ pageName, endpoint }) => {
         <Container maxWidth="lg">
             <Box my={4}>
                 <Paper elevation={3} style={{ padding: 16 }}>
+                    {/* Search Bar */}
+                    {enableBasicSearch && (
+                        <Box mb={3}>
+                            <BasicSearch
+                                pageName={pageName}
+                                setPage={setPage}
+                                perPage={perPage}
+                                searchQuery={searchQuery}
+                                setSearchQuery={setSearchQuery}
+                                fetchDataList={fetchDataList}
+                            />
+                        </Box>
+                    )}
 
                     {/* Pagination */}
                     <Box mb={3}>
@@ -65,7 +88,7 @@ const DataList = ({ pageName, endpoint }) => {
                             setPage={setPage}
                             perPage={perPage}
                             setPerPage={setPerPage}
-                            refreshData={refreshUserList}
+                            refreshData={refreshDataList}
                         />
                     </Box>
 
@@ -84,7 +107,7 @@ const DataList = ({ pageName, endpoint }) => {
                             setPage={setPage}
                             perPage={perPage}
                             setPerPage={setPerPage}
-                            refreshData={refreshUserList}
+                            refreshData={refreshDataList}
                         />
                     </Box>
 

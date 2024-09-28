@@ -1,100 +1,128 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { api_axios, axios } from '@/lib/axios'
 import {
     Box,
     Container,
     Paper,
-    IconButton,
     Typography,
-    Alert,
     CircularProgress,
+    TextField,
+    Select,
+    MenuItem,
+    InputLabel,
+    FormControl,
+    Button,
+    Accordion,
+    AccordionSummary,
+    AccordionDetails,
+    Alert,
 } from '@mui/material'
-import RefreshIcon from '@mui/icons-material/Refresh'
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
 import ErrorAlert from '@/components/ErrorAlert'
 
 const CustomApiRequest = () => {
-    const [datalist, setDataList] = useState([])
+    const [response, setResponse] = useState(null)
     const [loading, setLoading] = useState(false)
     const [errors, setErrors] = useState([])
     const [showSnackbar, setShowSnackbar] = useState(false)
 
-    // const endpoint = '/api/tokens/create'
-    const endpoint = '/user/two-factor-recovery-codes'
-
-    const params = {
-        // token_name: 'Bearer',
-    }
+    const [endpoint, setEndpoint] = useState('/users/search')
+    const [httpMethod, setHttpMethod] = useState('GET')
+    const [params, setParams] = useState({ search: 'test' })
+    const [apiInstance, setApiInstance] = useState('api_axios')
 
     const fetchDataList = async () => {
         setErrors([])
         setLoading(true)
-        await axios
-            .post(endpoint, params)
-            // .get(endpoint, params)
-            .then(response => {
-                console.log('Fetched data list:', response.data)
-                setDataList(response.data)
-            })
-            .catch(error => {
-                console.error('Error fetching data list:', error)
-                setErrors([error.response.data?.message || 'An error occurred'])
-                setShowSnackbar(true)
-            })
-            .finally(setLoading(false))
-    }
 
-    const refreshData = () => {
-        fetchDataList()
+        try {
+            const selectedApiInstance =
+                apiInstance === 'api_axios' ? api_axios : axios
+            const response = await selectedApiInstance[
+                httpMethod.toLowerCase()
+            ](endpoint, {
+                params,
+            })
+
+            console.log('Fetched data list:', response.data)
+            setResponse(response.data) // Store the entire response
+        } catch (error) {
+            console.error('Error fetching data list:', error)
+            setErrors([error.response?.data?.message || 'An error occurred'])
+            setShowSnackbar(true)
+        } finally {
+            setLoading(false)
+        }
     }
 
     const handleCloseSnackbar = () => {
         setShowSnackbar(false)
     }
 
-    // Function to display an object or array dynamically
-    const renderDataList = data => {
-        if (!data) return null
+    // Recursive function to render JSON data with accordions
+    const renderJson = data => {
+        if (typeof data === 'object' && data !== null) {
+            // Eğer bir dizi ise, her bir elemanı işleyelim
+            if (Array.isArray(data)) {
+                return data.map((item, index) => (
+                    <Accordion key={index} defaultExpanded={false}>
+                        <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                            <Typography variant="body1" fontWeight="bold">
+                                {`Item ${index}`}
+                            </Typography>
+                        </AccordionSummary>
+                        <AccordionDetails>
+                            <Box>{renderJson(item)}</Box>
+                        </AccordionDetails>
+                    </Accordion>
+                ))
+            }
 
-        // Check if the data is an array
-        if (Array.isArray(data)) {
-            return data.map((item, index) => (
-                <Box key={index} mb={2}>
-                    {typeof item === 'object' ? (
-                        renderDataList(item)
-                    ) : (
-                        <Alert
-                            key={index}
-                            severity="info"
-                            variant="filled"
-                            style={{ marginBottom: '8px' }}>
-                            {item}
-                        </Alert>
-                    )}
-                </Box>
-            ))
+            return Object.entries(data).map(([key, value], index) => {
+                // Eğer değer bir nesne ise, Accordiona saralım
+                if (typeof value === 'object' && value !== null) {
+                    return (
+                        <Accordion key={index} defaultExpanded={false}>
+                            <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                                <Typography variant="body1" fontWeight="bold">
+                                    {key}
+                                </Typography>
+                            </AccordionSummary>
+                            <AccordionDetails>
+                                <Box>{renderJson(value)}</Box>
+                            </AccordionDetails>
+                        </Accordion>
+                    )
+                }
+
+                // Diğer türler için direkt olarak gösterelim
+                return (
+                    <Box key={index}>
+                        <Typography variant="body2">
+                            <Typography variant="body3" fontWeight="bold">
+                                {key} :
+                            </Typography>
+                            {
+                                typeof value === 'boolean'
+                                    ? value.toString() // Boolean değerlerini string'e çevir
+                                    : Array.isArray(value)
+                                      ? value.length === 0
+                                          ? '[]' // Boş dizileri göster
+                                          : JSON.stringify(value) // Dizi içeriklerini göster
+                                      : value === null
+                                        ? 'null' // Null değerlerini göster
+                                        : value // Diğer türler için değer
+                            }
+                        </Typography>
+                    </Box>
+                )
+            })
         }
 
-        // If the data is an object, render key-value pairs
-        if (typeof data === 'object') {
-            return Object.entries(data).map(([key, value], index) => (
-                <Box key={index} mb={2}>
-                    <Alert
-                        key={index}
-                        severity="info"
-                        style={{ marginBottom: '8px' }}>
-                        <strong>{key}:</strong>{' '}
-                        {typeof value === 'object'
-                            ? renderDataList(value)
-                            : value.toString()}
-                    </Alert>
-                </Box>
-            ))
-        }
-
-        // For other data types (like strings or numbers), just display the value
-        return <Typography variant="body2">{data.toString()}</Typography>
+        // Diğer türler için direkt olarak gösterelim
+        return <Typography variant="body2">{data}</Typography>
     }
 
     return (
@@ -104,36 +132,92 @@ const CustomApiRequest = () => {
                     {/* Inline Alert for errors */}
                     <ErrorAlert messages={errors} />
 
+                    <Box display="flex" flexDirection="column" mb={3}>
+                        {/* API Instance Selection */}
+                        <FormControl
+                            variant="outlined"
+                            fullWidth
+                            margin="normal">
+                            <InputLabel id="api-instance-label">
+                                API Instance
+                            </InputLabel>
+                            <Select
+                                labelId="api-instance-label"
+                                value={apiInstance}
+                                onChange={e => setApiInstance(e.target.value)}>
+                                <MenuItem value="axios">axios</MenuItem>
+                                <MenuItem value="api_axios">api_axios</MenuItem>
+                            </Select>
+                        </FormControl>
+
+                        {/* HTTP Method Selection */}
+                        <FormControl
+                            variant="outlined"
+                            fullWidth
+                            margin="normal">
+                            <InputLabel id="http-method-label">
+                                Method
+                            </InputLabel>
+                            <Select
+                                labelId="http-method-label"
+                                value={httpMethod}
+                                onChange={e => setHttpMethod(e.target.value)}>
+                                <MenuItem value="GET">GET</MenuItem>
+                                <MenuItem value="POST">POST</MenuItem>
+                            </Select>
+                        </FormControl>
+
+                        {/* Endpoint Input */}
+                        <TextField
+                            label="Endpoint"
+                            variant="outlined"
+                            value={endpoint}
+                            onChange={e => setEndpoint(e.target.value)}
+                            margin="normal"
+                            fullWidth
+                        />
+
+                        {/* Parameters Input */}
+                        <TextField
+                            label="Parameters (JSON format)"
+                            variant="outlined"
+                            value={JSON.stringify(params, null, 2)} // JSON.stringify with indentation
+                            onChange={e =>
+                                setParams(JSON.parse(e.target.value || '{}'))
+                            }
+                            margin="normal"
+                            fullWidth
+                            multiline
+                            rows={4}
+                        />
+                    </Box>
+
                     <Box
                         display="flex"
                         justifyContent="space-between"
                         alignItems="center"
-                        mt={4}>
-                        <Box display="flex" alignItems="center">
+                        mt={2}>
+                        <Button
+                            variant="contained"
+                            color="primary"
+                            onClick={fetchDataList}
+                            disabled={loading}
+                            style={{ marginLeft: 8 }}>
                             {loading ? (
-                                <CircularProgress />
+                                <CircularProgress size={24} />
                             ) : (
-                                <IconButton
-                                    onClick={refreshData}
-                                    color="primary"
-                                    style={{ marginLeft: 8 }}>
-                                    <RefreshIcon />
-                                </IconButton>
+                                'Fetch Data'
                             )}
-                        </Box>
+                        </Button>
                     </Box>
 
-                    <Box mt={4}>
-                        {loading ? (
-                            <CircularProgress />
-                        ) : datalist ? (
-                            renderDataList(datalist)
-                        ) : (
-                            <Typography variant="body1">
-                                No data available.
-                            </Typography>
-                        )}
-                    </Box>
+                    {/* Render API Response */}
+                    {response && (
+                        <Box mt={4}>
+                            <Typography variant="h6">Response Data</Typography>
+                            {renderJson(response)}
+                        </Box>
+                    )}
 
                     {/* Snackbar for temporary error notifications */}
                     <ErrorAlert

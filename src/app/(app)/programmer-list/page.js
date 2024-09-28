@@ -17,6 +17,7 @@ const ProgrammerListPage = () => {
                 <DataList
                     pageName={'ProgrammerList'}
                     endpoint={'/programmers'}
+                    enableBasicSearch={true}
                 />
                 <CustomApiRequest />
             </Container>
