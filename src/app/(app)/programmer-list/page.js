@@ -2,7 +2,6 @@ import dynamic from 'next/dynamic'
 import Header from '@/app/(app)/Header'
 import Loading from '@/app/(app)/Loading'
 import { Container } from '@mui/material'
-import CustomApiRequest from '@/components/CustomApiRequest/CustomApiRequest'
 
 const DataList = dynamic(() => import('@/components/DataList/DataList'), {
     ssr: false,
@@ -19,7 +18,6 @@ const ProgrammerListPage = () => {
                     endpoint={'/programmers'}
                     enableBasicSearch={true}
                 />
-                <CustomApiRequest />
             </Container>
         </>
     )

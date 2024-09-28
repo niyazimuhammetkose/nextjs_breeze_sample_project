@@ -39,6 +39,16 @@ const Navigation = ({ user }) => {
 
                         <div className="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
                             <NavLink
+                                href="/custom-api-request"
+                                active={
+                                    usePathname() === '/custom-api-request'
+                                }>
+                                Custom API Request
+                            </NavLink>
+                        </div>
+
+                        <div className="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
+                            <NavLink
                                 href="/user-list"
                                 active={usePathname() === '/user-list'}>
                                 User List
